@@ -123,6 +123,8 @@ export function UploadForm() {
       </CardHeader>
       <Form {...form}>
         <form
+          // fix this later
+          // @ts-ignore
           onSubmit={form.handleSubmit(onSubmit, (err) => {
             console.log(err)
           })}

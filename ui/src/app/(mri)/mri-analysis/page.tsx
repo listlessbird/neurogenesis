@@ -1,6 +1,7 @@
 "use client"
 import { UploadForm, UploadProvider } from "./upload-form"
 import { UploadPreview } from "./upload-preview"
+import { ResultAnalysis } from "./result-analysis/results"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -24,7 +25,9 @@ export default function AnalyzePage() {
             </UploadProvider>
           </div>
         </TabsContent>
-        <TabsContent value="mra">Medical Result Analysis</TabsContent>
+        <TabsContent value="mra" className="min-h-[80vh] size-full">
+          <ResultAnalysis />
+        </TabsContent>
       </Tabs>
     </>
   )
