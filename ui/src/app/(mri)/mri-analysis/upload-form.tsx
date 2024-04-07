@@ -40,9 +40,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+const NEURO_DISEASES = ["alzheimer", "parkinson", "huntington", "als"] as const
+
+type NeuroDisease = (typeof NEURO_DISEASES)[number]
+
 type UploadContextType = {
+  type: NeuroDisease
   files: File[]
   setFiles: Dispatch<React.SetStateAction<File[]>>
+  setType: Dispatch<React.SetStateAction<NeuroDisease>>
 }
 
 const UploadContext = createContext<UploadContextType | null>(null)
@@ -57,15 +63,14 @@ export function useUpload() {
 
 export function UploadProvider({ children }: { children: React.ReactNode }) {
   const [files, setFiles] = useState<File[]>([])
+  const [type, setType] = useState<NeuroDisease>(NEURO_DISEASES[0])
 
   return (
-    <UploadContext.Provider value={{ files, setFiles }}>
+    <UploadContext.Provider value={{ files, setFiles, type, setType }}>
       {children}
     </UploadContext.Provider>
   )
 }
-
-const NEURO_DISEASES = ["alzheimer", "parkinson", "huntington", "als"] as const
 
 const UploadFormSchema = z.object({
   name: z.string(),
@@ -76,7 +81,7 @@ const UploadFormSchema = z.object({
 })
 
 export function UploadForm() {
-  const { files, setFiles } = useUpload()
+  const { files, setFiles, type, setType } = useUpload()
 
   const uploadRef = useRef(null)
 
@@ -97,18 +102,6 @@ export function UploadForm() {
       setFiles((prev) => [...prev, ...files])
     },
   })
-
-  // useEffect(
-  //   function syncFiles() {
-  //     console.log("sync!!")
-  //     if (!uploadRef.current) return
-  //     const input = uploadRef.current as HTMLInputElement
-  //     const filesInInput = input.files
-  //     if (!filesInInput) return
-  //     filesInInput.
-  //   },
-  //   [files]
-  // )
 
   const form = useForm({
     resolver: zodResolver(UploadFormSchema),
@@ -152,7 +145,10 @@ export function UploadForm() {
                       Neurodegenerative disease
                     </FormLabel>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(e) => {
+                        field.onChange(e)
+                        setType(e as NeuroDisease)
+                      }}
                       defaultValue={field.value}
                     >
                       <FormControl>
