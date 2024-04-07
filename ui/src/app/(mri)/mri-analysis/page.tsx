@@ -10,10 +10,10 @@ export default function AnalyzePage() {
     <>
       <Tabs defaultValue="nda" className="min-h-full">
         <TabsList className="w-full justify-around">
-          <TabsTrigger value="nda" className="w-full">
+          <TabsTrigger value="nda" className="w-full text-pretty">
             Neurodegenerative Disease Analysis
           </TabsTrigger>
-          <TabsTrigger value="mra" className="w-full">
+          <TabsTrigger value="mra" className="w-full text-pretty">
             Medical Result Analysis
           </TabsTrigger>
         </TabsList>
