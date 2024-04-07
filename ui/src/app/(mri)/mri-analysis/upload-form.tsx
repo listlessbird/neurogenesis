@@ -21,6 +21,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react"
@@ -44,11 +45,17 @@ const NEURO_DISEASES = ["alzheimer", "parkinson", "huntington", "als"] as const
 
 type NeuroDisease = (typeof NEURO_DISEASES)[number]
 
+type PredictedResuls = {
+  label: string
+  score: number
+}
+
 type UploadContextType = {
   type: NeuroDisease
   files: File[]
   setFiles: Dispatch<React.SetStateAction<File[]>>
   setType: Dispatch<React.SetStateAction<NeuroDisease>>
+  results: PredictedResuls[]
 }
 
 const UploadContext = createContext<UploadContextType | null>(null)
@@ -65,10 +72,22 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
   const [files, setFiles] = useState<File[]>([])
   const [type, setType] = useState<NeuroDisease>(NEURO_DISEASES[0])
 
+  const [results, setResults] = useState<PredictedResuls[]>([])
+
+  const values = useMemo(
+    () => ({
+      files,
+      setFiles,
+      type,
+      setType,
+      results,
+      setResults,
+    }),
+    [files, type, results]
+  )
+
   return (
-    <UploadContext.Provider value={{ files, setFiles, type, setType }}>
-      {children}
-    </UploadContext.Provider>
+    <UploadContext.Provider value={values}>{children}</UploadContext.Provider>
   )
 }
 
@@ -91,6 +110,8 @@ export function UploadForm() {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [],
       "application/pdf": [],
+      "image/jpeg": [],
+      "image/png": [],
     },
     onDrop: (accepted, rejected, e) => {
       console.log({
@@ -114,8 +135,40 @@ export function UploadForm() {
     },
   })
 
-  function onSubmit(data: z.infer<typeof UploadFormSchema>) {
+  async function onSubmit(data: z.infer<typeof UploadFormSchema>) {
     console.log(data)
+
+    const formData = new FormData()
+    formData.append("name", data.name)
+    formData.append("age", data.age.toString())
+    formData.append("history", data.history)
+    formData.append("neurodegenerativeDisease", data.neurodegenerativeDisease)
+    data.scans.forEach((file) => {
+      formData.append("image", file)
+    })
+
+    switch (type) {
+      case "alzheimer": {
+        const res = await fetch("http://127.0.0.1:5000/mri", {
+          method: "POST",
+          body: formData,
+        })
+
+        const json = await res.json()
+        console.log(json)
+      }
+      case "parkinson": {
+        const res = await fetch("http://127.0.0.1:5000/parkinson", {
+          method: "POST",
+          body: formData,
+        })
+
+        const json = await res.json()
+        console.log(json)
+      }
+      case "huntington":
+      case "als":
+    }
   }
 
   return (
