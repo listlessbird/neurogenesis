@@ -32,12 +32,7 @@ export async function POST(req: Request) {
   }
 
   const prompt = `
-  Analyzing Medical Report from Image
-
-    Description:
-
-  Please analyze the medical report depicted in the provided image. The report contains details regarding a patient's health condition. Provide a comprehensive analysis including any diagnoses, notable findings, and recommended courses of action based on the information provided in the image.
-`
+   Can you look at an image and tell me if it's a medical report? If it is, explain what it shows in plain English, like you're talking to someone who doesn't know much medical jargon.`
 
   // return new Response("ok")
   const geminiStream = await genAI

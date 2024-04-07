@@ -69,10 +69,13 @@ export function ResultAnalysis() {
     acceptedFiles,
   } = useDropzone({ accept: { "image/*": [] } })
 
-  const [result, setResult] = useState("")
+  const [result, setResult] = useState(``)
+
+  const [loading, setLoading] = useState(false)
 
   const makeApiReq = useCallback(async function (fd: FormData) {
     try {
+      setLoading(true)
       const res = await fetch("/api/completions", {
         method: "POST",
         body: fd,
@@ -101,6 +104,8 @@ export function ResultAnalysis() {
       if (error instanceof Error) {
         setResult(`Error: ${error.message}`)
       }
+    } finally {
+      setLoading(false)
     }
   }, [])
 
@@ -221,7 +226,12 @@ export function ResultAnalysis() {
               )}
 
               <div className="self-center">
-                <Button type="submit">Get Analysis</Button>
+                <Button type="submit" disabled={acceptedFiles.length === 0}>
+                  {!!loading ? "Getting Analysis..." : "Get Analysis"}
+                  {!!loading && (
+                    <span className="h-2 w-full max-w-md p-2 ml-2 bg-gray-300 dark:bg-gray-600 rounded-lg animate-pulse self-center" />
+                  )}
+                </Button>
               </div>
             </form>
           </Form>
@@ -231,7 +241,9 @@ export function ResultAnalysis() {
 
           <div className="border rounded-lg dark:bg-gray-950 dark:text-gray-50 p-4 border-opacity-5">
             <p>Results will be displayed here.</p>
-            <p>{result}</p>
+            <div className="mt-2 container">
+              <code>{JSON.stringify(result, null, 2)}</code>
+            </div>
           </div>
         </div>
       </div>
