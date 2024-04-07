@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import z from "zod"
 
+import z from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useDropzone } from "react-dropzone"
+
 import {
   Dispatch,
   createContext,
@@ -22,6 +24,13 @@ import {
   useRef,
   useState,
 } from "react"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form"
 
 type UploadContextType = {
   files: File[]
@@ -50,7 +59,7 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
 
 const UploadFormSchema = z.object({
   name: z.string(),
-  age: z.number(),
+  age: z.coerce.number().int(),
   history: z.string(),
   scans: z.array(z.instanceof(File)),
 })
@@ -67,12 +76,12 @@ export function UploadForm() {
         [],
       "application/pdf": [],
     },
-    // onDrop: (accepted, rejected, e) => {
-    //   console.log({
-    //     accepted,
-    //     rejected,
-    //   })
-    // },
+    onDrop: (accepted, rejected, e) => {
+      console.log({
+        accepted,
+        rejected,
+      })
+    },
     onDropAccepted: (files, e) => {
       setFiles((prev) => [...prev, ...files])
     },
@@ -90,6 +99,20 @@ export function UploadForm() {
   //   [files]
   // )
 
+  const form = useForm({
+    resolver: zodResolver(UploadFormSchema),
+    defaultValues: {
+      name: "",
+      age: 0,
+      history: "",
+      scans: [],
+    },
+  })
+
+  function onSubmit(data: z.infer<typeof UploadFormSchema>) {
+    console.log(data)
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -98,51 +121,113 @@ export function UploadForm() {
           Upload MRI/CT scans and enter patient information.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        <div className="flex flex-col gap-2">
-          <Label className="text-sm" htmlFor="scans">
-            Select file
-          </Label>
-          <small className="text-sm text-gray-500 dark:text-gray-400">
-            Accepted file types: .jpg, .png, .pdf, .docx
-          </small>
-        </div>
-        <div className="contents" {...dropzoneProps.getRootProps()}>
-          <Input
-            {...dropzoneProps.getInputProps({
-              style: {},
-              ref: uploadRef,
-            })}
-            className="cursor-pointer"
-            id="scans"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label className="text-sm" htmlFor="name">
-            Patient name
-          </Label>
-          <Input id="name" placeholder="Enter patient name" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label className="text-sm" htmlFor="age">
-            Patient age
-          </Label>
-          <Input id="age" placeholder="Enter patient age" type="number" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label className="text-sm" htmlFor="history">
-            Medical history
-          </Label>
-          <Textarea
-            className="min-h-[100px]"
-            id="history"
-            placeholder="Enter patient medical history"
-          />
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="ml-auto">Upload</Button>
-      </CardFooter>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit, (err) => {
+            console.log(err)
+          })}
+        >
+          <CardContent className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="scans"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-col gap-2">
+                    <FormLabel className="text-sm" htmlFor="scans">
+                      Select file
+                    </FormLabel>
+                    <small className="text-sm text-gray-500 dark:text-gray-400">
+                      Accepted file types: .jpg, .png, .pdf, .docx
+                    </small>
+                  </div>
+                  <div className="contents">
+                    <FormControl {...dropzoneProps.getRootProps()}>
+                      <Input
+                        {...dropzoneProps.getInputProps({
+                          style: {},
+                          id: "scans",
+                          onChange: (e) => {
+                            field.onChange(Array.from(e.target.files || []))
+                          },
+                        })}
+                        className="cursor-pointer"
+                      />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-col gap-2">
+                    <FormLabel className="text-sm" htmlFor="name">
+                      Patient name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="name"
+                        placeholder="Enter patient name"
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="age"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-col gap-2">
+                    <FormLabel className="text-sm" htmlFor="age">
+                      Patient age
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="age"
+                        placeholder="Enter patient age"
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="history"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-col gap-2">
+                    <FormLabel className="text-sm" htmlFor="history">
+                      Medical history
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        className="min-h-[100px]"
+                        id="history"
+                        placeholder="Enter patient medical history"
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter>
+            <Button className="ml-auto">Upload</Button>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   )
 }
