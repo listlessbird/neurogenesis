@@ -31,6 +31,14 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 type UploadContextType = {
   files: File[]
@@ -57,11 +65,14 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
+const NEURO_DISEASES = ["alzheimer", "parkinson", "huntington", "als"] as const
+
 const UploadFormSchema = z.object({
   name: z.string(),
   age: z.coerce.number().int(),
   history: z.string(),
   scans: z.array(z.instanceof(File)),
+  neurodegenerativeDisease: z.enum(NEURO_DISEASES),
 })
 
 export function UploadForm() {
@@ -106,6 +117,7 @@ export function UploadForm() {
       age: "",
       history: "",
       scans: [],
+      neurodegenerativeDisease: "alzheimer",
     },
   })
 
@@ -130,6 +142,43 @@ export function UploadForm() {
           })}
         >
           <CardContent className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="neurodegenerativeDisease"
+              render={({ field }) => (
+                <div className="grid gap-4">
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      Neurodegenerative disease
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder="Select disease" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value={NEURO_DISEASES[0]}>
+                            Alzheimer&apos;s
+                          </SelectItem>
+                          <SelectItem value={NEURO_DISEASES[1]}>
+                            Parkinson&apos;s
+                          </SelectItem>
+                          <SelectItem value={NEURO_DISEASES[2]}>
+                            Huntington&apos;s
+                          </SelectItem>
+                          <SelectItem value="als">ALS</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                </div>
+              )}
+            />
             <FormField
               control={form.control}
               name="scans"
