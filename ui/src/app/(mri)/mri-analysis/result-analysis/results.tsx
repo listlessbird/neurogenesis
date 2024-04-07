@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { FileIcon } from "lucide-react"
+import Image from "next/image"
 import { useMemo } from "react"
 import Dropzone, { useDropzone } from "react-dropzone"
 
@@ -69,32 +71,57 @@ export function ResultAnalysis() {
 
           <div>
             <section>
-              <div
+              {/* <div
                 {...getRootProps({
                   // @ts-ignore
                   style: { ...style },
                 })}
-                className="w-full h-full flex items-center justify-center"
               >
                 <input {...getInputProps()} />
                 <p>
                   Drag &apos;n&apos; drop some files here, or click to select
                   files
                 </p>
+              </div> */}
+              <div className="relative border-2 border-dashed border-gray-200 rounded-lg p-6 flex flex-col items-center gap-2">
+                <FileIcon className="w-12 h-12 text-gray-300" />
+                <span className="text-sm text-gray-500">
+                  Drag and drop your file here
+                </span>
+                <Button size="sm" variant="outline" {...getRootProps()}>
+                  Select File
+                  <Input
+                    className="absolute inset-0 opacity-0 w-full cursor-pointer"
+                    type="file"
+                    {...getInputProps()}
+                  />
+                </Button>
               </div>
+              {/* <DropzoneStyled /> */}
             </section>
           </div>
 
           {acceptedFiles.length > 0 && (
-            <div className="bg-green-500 bg-opacity-5 p-2 rounded-lg">
-              <h2>Attachments: </h2>
-              <ul>
-                {acceptedFiles.map((file) => (
-                  <li key={file.name}>
-                    {file.name} - {file.size} bytes
-                  </li>
-                ))}
-              </ul>
+            <div>
+              {acceptedFiles.map((file, i) => (
+                <div className="flex items-center gap-4" key={i}>
+                  <Image
+                    alt="Thumbnail"
+                    className="rounded"
+                    height="40"
+                    src="/placeholder.svg"
+                    style={{
+                      aspectRatio: "40/40",
+                      objectFit: "cover",
+                    }}
+                    width="40"
+                  />
+                  <div className="text-sm leading-none">
+                    <h3 className="font-medium">{file.name}</h3>
+                    <p className="text-sm text-gray-500">{file.size} bytes</p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
