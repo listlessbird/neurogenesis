@@ -23,20 +23,23 @@ export function UploadPreview() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          {files.map((file, i) => (
+          <p className="text-muted">
+            Upload a scan to analyze the probability of a Neurodegenerative
+            disease
+          </p>
+          {/* {files.map((file, i) => (
             <UploadedActions
               key={i}
               file={file}
               onRemove={() =>
                 setFiles((prev) => prev.filter((f) => f !== file))
               }
-            />
-          ))}
+            /> */}
         </CardContent>
         <CardFooter>
-          <Button size="sm" disabled={files.length === 0}>
+          {/* <Button size="sm" disabled={files.length === 0}>
             Analyze
-          </Button>
+          </Button> */}
         </CardFooter>
       </Card>
     </div>

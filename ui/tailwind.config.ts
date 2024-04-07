@@ -8,7 +8,7 @@ const config: Config = {
   ],
   theme: {
     container: {
-      center: true,
+      center: false,
     },
     extend: {
       backgroundImage: {

@@ -103,7 +103,7 @@ export function UploadForm() {
     resolver: zodResolver(UploadFormSchema),
     defaultValues: {
       name: "",
-      age: 0,
+      age: "",
       history: "",
       scans: [],
     },
@@ -114,7 +114,7 @@ export function UploadForm() {
   }
 
   return (
-    <Card className="w-full">
+    <Card className="size-full">
       <CardHeader>
         <CardTitle>Upload</CardTitle>
         <CardDescription>
