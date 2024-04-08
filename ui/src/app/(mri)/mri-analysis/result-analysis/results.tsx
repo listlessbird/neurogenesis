@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FileIcon } from "lucide-react"
 import Image from "next/image"
@@ -15,7 +14,8 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form"
-import { useChat, useCompletion } from "ai/react"
+
+import ReactMarkdown from "react-markdown"
 
 const baseStyle = {
   height: "185px",
@@ -236,13 +236,15 @@ export function ResultAnalysis() {
             </form>
           </Form>
         </div>
-        <div className="p-4">
+        <div className="p-4 space-y-2">
           <h1 className="text-xl">Results:</h1>
 
           <div className="border rounded-lg dark:bg-gray-950 dark:text-gray-50 p-4 border-opacity-5">
-            <p>Results will be displayed here.</p>
-            <div className="mt-2 container">
-              <code>{JSON.stringify(result, null, 2)}</code>
+            {result.length === 0 && <p>Results will be displayed here.</p>}
+            <div className="mt-2 w-fit">
+              <article className="text-pretty prose lg:prose-xl dark:prose-invert size-full">
+                <ReactMarkdown>{result}</ReactMarkdown>
+              </article>
             </div>
           </div>
         </div>

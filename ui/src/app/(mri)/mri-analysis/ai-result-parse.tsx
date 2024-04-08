@@ -1,6 +1,5 @@
 import { PredictedResults } from "./upload-form"
 import { Suspense, useCallback, useEffect, useRef, useState } from "react"
-import { createRoot } from "react-dom/client"
 import ReactMarkdown from "react-markdown"
 
 export function GetAIAnalysis({ results }: { results: PredictedResults[] }) {
