@@ -32,7 +32,10 @@ export async function POST(req: Request) {
   }
 
   const prompt = `
-   Can you look at an image and tell me if it's a medical report? If it is, explain what it shows in plain English, like you're talking to someone who doesn't know much medical jargon.`
+   Can you look at an image and tell me if it's a medical report? If it is, explain what it shows, and what can be inferred from it and also how should the person move forward in plain English, like you're talking to someone who doesn't know much medical jargon.
+   
+   MAKE SURE TO SEND THE RESPONSE IN MARKDOWN FORMAT.
+   `
 
   // return new Response("ok")
   const geminiStream = await genAI
