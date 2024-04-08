@@ -22,7 +22,7 @@ export default function AnalyzePage() {
           <div className="grid md:grid-cols-[300px_1fr] gap-4 w-full items-start lg:grid-cols-[300px_1fr] py-2">
             <UploadProvider>
               <div className="size-full">
-                <div className="fixed left-0 w-[300px] h-[92vh]">
+                <div className="fixed left-0 w-[300px] min-h-[92vh]">
                   <UploadForm />
                 </div>
               </div>
