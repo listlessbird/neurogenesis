@@ -41,7 +41,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-const NEURO_DISEASES = ["alzheimer", "parkinson", "huntington", "als"] as const
+const NEURO_DISEASES = ["alzheimer", "parkinson"] as const
 
 type NeuroDisease = (typeof NEURO_DISEASES)[number]
 
@@ -189,8 +189,8 @@ export function UploadForm() {
         setHasSubmitted(false)
         break
       }
-      case "huntington":
-      case "als":
+      // case "huntington":
+      // case "als":
     }
   }
 
@@ -240,10 +240,10 @@ export function UploadForm() {
                           <SelectItem value={NEURO_DISEASES[1]}>
                             Parkinson&apos;s
                           </SelectItem>
-                          <SelectItem value={NEURO_DISEASES[2]}>
+                          {/* <SelectItem value={NEURO_DISEASES[2]}>
                             Huntington&apos;s
                           </SelectItem>
-                          <SelectItem value="als">ALS</SelectItem>
+                          <SelectItem value="als">ALS</SelectItem> */}
                         </SelectGroup>
                       </SelectContent>
                     </Select>

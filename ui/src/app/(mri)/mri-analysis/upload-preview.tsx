@@ -42,15 +42,15 @@ export function UploadPreview() {
           "Parkinson's disease is a progressive nervous system disorder that affects movement. Symptoms start gradually, sometimes starting with a barely noticeable tremor in just one hand. Tremors are common, but the disorder also commonly causes stiffness or slowing of movement."
         break
 
-      case "huntington":
-        text =
-          "Huntington's disease is an inherited disease that causes the progressive breakdown (degeneration) of nerve cells in the brain. Huntington's disease has a broad impact on a person's functional abilities and usually results in movement, thinking (cognitive) and psychiatric disorders."
-        break
+      // case "huntington":
+      //   text =
+      //     "Huntington's disease is an inherited disease that causes the progressive breakdown (degeneration) of nerve cells in the brain. Huntington's disease has a broad impact on a person's functional abilities and usually results in movement, thinking (cognitive) and psychiatric disorders."
+      //   break
 
-      case "als":
-        text =
-          "Amyotrophic lateral sclerosis (ALS) is a group of rare neurological diseases that mainly involve the nerve cells (neurons) responsible for controlling voluntary muscle movement. Voluntary muscles produce movements like chewing, walking, and talking. The disease is progressive, meaning the symptoms get worse over time."
-        break
+      // case "als":
+      //   text =
+      //     "Amyotrophic lateral sclerosis (ALS) is a group of rare neurological diseases that mainly involve the nerve cells (neurons) responsible for controlling voluntary muscle movement. Voluntary muscles produce movements like chewing, walking, and talking. The disease is progressive, meaning the symptoms get worse over time."
+      //   break
     }
 
     const MethodOfAnalysis = memo(function Method() {
