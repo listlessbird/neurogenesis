@@ -9,8 +9,8 @@ import React from "react"
 export default function AnalyzePage() {
   return (
     <>
-      <Tabs defaultValue="nda" className="min-h-full">
-        <TabsList className="w-full justify-around">
+      <Tabs defaultValue="nda" className="min-h-full relative z-0">
+        <TabsList className="w-full justify-around sticky top-2 z-100 shadow-lg p-4">
           <TabsTrigger value="nda" className="w-full text-pretty">
             Neurodegenerative Disease Analysis
           </TabsTrigger>
@@ -18,11 +18,17 @@ export default function AnalyzePage() {
             Medical Result Analysis
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="nda" className="min-h-full size-full">
-          <div className="grid md:grid-cols-[300px_1fr] gap-4 w-full items-start lg:grid-cols-[300px_1fr] min-h-[94vh] py-2">
+        <TabsContent value="nda" className="size-full">
+          <div className="grid md:grid-cols-[300px_1fr] gap-4 w-full items-start lg:grid-cols-[300px_1fr] py-2">
             <UploadProvider>
-              <UploadForm />
-              <UploadPreview />
+              <div className="size-full">
+                <div className="fixed left-0 w-[300px] h-[92vh]">
+                  <UploadForm />
+                </div>
+              </div>
+              <div className="overflow-y-auto -z-10">
+                <UploadPreview />
+              </div>
             </UploadProvider>
           </div>
         </TabsContent>
