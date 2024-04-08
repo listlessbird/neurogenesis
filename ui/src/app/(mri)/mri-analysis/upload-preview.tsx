@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { GetAIAnalysis } from "./ai-result-parse"
 
 export function UploadPreview() {
   const { files, setFiles, type, hasSubmitted, setHasSubmitted, results } =
@@ -183,6 +184,22 @@ export function UploadPreview() {
             </div>
           </CardContent>
         </Card>
+      </div>
+      <div className="ai-analysis-card">
+        {results.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 capitalize">
+                AI Analysis
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div>
+                <GetAIAnalysis results={results} />
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   )

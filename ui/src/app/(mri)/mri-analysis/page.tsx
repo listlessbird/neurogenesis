@@ -4,6 +4,7 @@ import { UploadPreview } from "./upload-preview"
 import { ResultAnalysis } from "./result-analysis/results"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import React from "react"
 
 export default function AnalyzePage() {
   return (
