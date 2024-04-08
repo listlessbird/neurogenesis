@@ -21,7 +21,7 @@ export function Component() {
             </Link>
             <Link
               className="text-sm font-medium hover:underline underline-offset-4"
-              href="#"
+              href="#about"
             >
               About
             </Link>
@@ -69,15 +69,23 @@ export function Component() {
           <section className="w-full py-12 md:py-24 lg:py-32">
             <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6"></div>
           </section>
-          <section className="w-full py-12 md:py-24 lg:py-32 border-t">
-            <div className="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-[1fr_500px] lg:gap-10">
-              {/* <img
-              alt="Avatar"
-              className="mx-auto aspect-square overflow-hidden rounded-full object-cover object-center lg:order-last lg:aspect-square"
-              height="500"
-              src="/placeholder.svg"
-              width="500"
-            /> */}
+          <section
+            className="w-full py-12 md:py-24 lg:py-32 border-t flex justify-center h-[50vh]"
+            id="about"
+          >
+            <div className="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10 justify-center">
+              <h2 className="mt-10 scroll-m-20 pb-2 text-5xl font-semibold tracking-tight transition-colors first:mt-0 w-fit justify-self-center">
+                About
+              </h2>
+              <div>
+                <p className="[&:not(:first-child)]:mt-6 text-3xl text-pretty">
+                  Our platform is designed specifically for the detection of
+                  neurodegenerative diseases, providing doctors with the tools
+                  to examine both test results and patient-supplied data, such
+                  as blood tests. Our aim is to facilitate early identification
+                  and intervention for these conditions
+                </p>
+              </div>
               <div className="grid gap-4"></div>
             </div>
           </section>

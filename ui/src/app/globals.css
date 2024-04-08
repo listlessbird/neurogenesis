@@ -45,3 +45,8 @@ input::file-selector-button {
   color: currentColor;
   background-color: #475569;
 }
+
+html {
+  --scroll-behavior: smooth !important;
+  scroll-behavior: smooth !important;
+}
