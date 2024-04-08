@@ -1,11 +1,13 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
-import { GoogleGenerativeAIStream } from "ai"
 import { PredictedResults } from "./upload-form"
-import { Suspense, useCallback, useEffect, useState } from "react"
+import { Suspense, useCallback, useEffect, useRef, useState } from "react"
+import { createRoot } from "react-dom/client"
+import ReactMarkdown from "react-markdown"
 
 export function GetAIAnalysis({ results }: { results: PredictedResults[] }) {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState("")
+
+  const ref = useRef<HTMLDivElement>(null)
 
   const makeApiReq = useCallback(async function (results: PredictedResults[]) {
     try {
@@ -52,7 +54,16 @@ export function GetAIAnalysis({ results }: { results: PredictedResults[] }) {
       <Suspense
         fallback={<div>Hang tight while getting the AI analysis...</div>}
       >
-        <div className="text-pretty">{result}</div>
+        <article
+          className="text-pretty prose lg:prose-xl dark:prose-invert"
+          ref={ref}
+        >
+          {/* {result} */}
+          {ref.current &&
+            (createRoot(ref.current as HTMLElement).render(
+              <ReactMarkdown>{result}</ReactMarkdown>
+            ) as any)}
+        </article>
       </Suspense>
     </div>
   )

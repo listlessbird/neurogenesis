@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     The analysis should include the significance of the results, potential implications, and any recommendations based on the results.
     Use simple language and avoid technical jargon.
 
-    
+    THE RESPONSE SHOULD BE IN MARKDOWN FORMAT.
     `
 
   //   const result = await model.generateContentStream(prompt)
