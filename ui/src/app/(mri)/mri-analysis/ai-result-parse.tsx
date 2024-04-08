@@ -57,12 +57,9 @@ export function GetAIAnalysis({ results }: { results: PredictedResults[] }) {
         <article
           className="text-pretty prose lg:prose-xl dark:prose-invert"
           ref={ref}
+          id="ai-root"
         >
-          {/* {result} */}
-          {ref.current &&
-            (createRoot(ref.current as HTMLElement).render(
-              <ReactMarkdown>{result}</ReactMarkdown>
-            ) as any)}
+          <ReactMarkdown>{result}</ReactMarkdown>
         </article>
       </Suspense>
     </div>
