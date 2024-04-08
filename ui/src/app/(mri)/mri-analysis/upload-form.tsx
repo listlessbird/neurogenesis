@@ -175,6 +175,7 @@ export function UploadForm() {
         console.log(json)
         setResults(json)
         setHasSubmitted(false)
+        break
       }
       case "parkinson": {
         const res = await fetch("http://127.0.0.1:5000/parkinson", {
@@ -186,6 +187,7 @@ export function UploadForm() {
         console.log(json)
         setResults(json)
         setHasSubmitted(false)
+        break
       }
       case "huntington":
       case "als":
