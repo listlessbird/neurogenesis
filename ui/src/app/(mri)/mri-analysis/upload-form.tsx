@@ -45,7 +45,7 @@ const NEURO_DISEASES = ["alzheimer", "parkinson", "huntington", "als"] as const
 
 type NeuroDisease = (typeof NEURO_DISEASES)[number]
 
-type PredictedResuls = {
+export type PredictedResults = {
   label: string
   score: number
 }
@@ -55,7 +55,10 @@ type UploadContextType = {
   files: File[]
   setFiles: Dispatch<React.SetStateAction<File[]>>
   setType: Dispatch<React.SetStateAction<NeuroDisease>>
-  results: PredictedResuls[]
+  results: PredictedResults[]
+  setResults: Dispatch<React.SetStateAction<PredictedResults[]>>
+  hasSubmitted: boolean
+  setHasSubmitted: Dispatch<React.SetStateAction<boolean>>
 }
 
 const UploadContext = createContext<UploadContextType | null>(null)
@@ -72,7 +75,9 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
   const [files, setFiles] = useState<File[]>([])
   const [type, setType] = useState<NeuroDisease>(NEURO_DISEASES[0])
 
-  const [results, setResults] = useState<PredictedResuls[]>([])
+  const [results, setResults] = useState<PredictedResults[]>([])
+
+  const [hasSubmitted, setHasSubmitted] = useState(false)
 
   const values = useMemo(
     () => ({
@@ -82,8 +87,10 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
       setType,
       results,
       setResults,
+      hasSubmitted,
+      setHasSubmitted,
     }),
-    [files, type, results]
+    [files, type, results, hasSubmitted, setHasSubmitted]
   )
 
   return (
@@ -100,7 +107,15 @@ const UploadFormSchema = z.object({
 })
 
 export function UploadForm() {
-  const { files, setFiles, type, setType } = useUpload()
+  const {
+    files,
+    setFiles,
+    type,
+    setType,
+    hasSubmitted,
+    setHasSubmitted,
+    setResults,
+  } = useUpload()
 
   const uploadRef = useRef(null)
 
@@ -138,6 +153,8 @@ export function UploadForm() {
   async function onSubmit(data: z.infer<typeof UploadFormSchema>) {
     console.log(data)
 
+    setHasSubmitted(true)
+
     const formData = new FormData()
     formData.append("name", data.name)
     formData.append("age", data.age.toString())
@@ -154,8 +171,10 @@ export function UploadForm() {
           body: formData,
         })
 
-        const json = await res.json()
+        const json = (await res.json()) as PredictedResults[]
         console.log(json)
+        setResults(json)
+        setHasSubmitted(false)
       }
       case "parkinson": {
         const res = await fetch("http://127.0.0.1:5000/parkinson", {
@@ -163,8 +182,10 @@ export function UploadForm() {
           body: formData,
         })
 
-        const json = await res.json()
+        const json = (await res.json()) as PredictedResults[]
         console.log(json)
+        setResults(json)
+        setHasSubmitted(false)
       }
       case "huntington":
       case "als":

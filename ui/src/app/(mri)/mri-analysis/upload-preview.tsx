@@ -8,12 +8,22 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { FileIcon } from "lucide-react"
-import { useUpload } from "./upload-form"
+import { PredictedResults, useUpload } from "./upload-form"
 import { memo } from "react"
 import Image from "next/image"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 export function UploadPreview() {
-  const { files, setFiles, type } = useUpload()
+  const { files, setFiles, type, hasSubmitted, setHasSubmitted, results } =
+    useUpload()
 
   console.log(type)
 
@@ -117,31 +127,88 @@ export function UploadPreview() {
   })
 
   return (
-    <div className="size-full">
-      <Card>
-        <CardHeader>
-          <CardTitle className="mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 capitalize">
-            {type}
-          </CardTitle>
-          <CardDescription>
-            Scan analysis and probability estimation for{" "}
-            <span className="capitalize">{type}</span>.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <About />
-          {/* <p className="text-muted">
+    <div className="size-full flex flex-col gap-3">
+      <div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 capitalize">
+              {type}
+            </CardTitle>
+            <CardDescription>
+              Scan analysis and probability estimation for{" "}
+              <span className="capitalize">{type}</span>.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <About />
+            {/* <p className="text-muted">
             Upload a scan to analyze the probability of a Neurodegenerative
             disease
           </p> */}
-        </CardContent>
-        <CardFooter>
-          {/* <Button size="sm" disabled={files.length === 0}>
+          </CardContent>
+          <CardFooter>
+            {/* <Button size="sm" disabled={files.length === 0}>
             Analyze
           </Button> */}
-        </CardFooter>
-      </Card>
+          </CardFooter>
+        </Card>
+      </div>
+      <div className="result-wrapper">
+        <Card>
+          <CardHeader>
+            <CardTitle className="mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 capitalize">
+              Results
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div>
+              {!hasSubmitted && (
+                <p>
+                  Predicted results will show up here once you submit the scan.
+                </p>
+              )}
+              {hasSubmitted && results.length === 0 && (
+                <div className="flex">
+                  <p>
+                    Hang tight! while we analyze the scan and provide you with
+                    the results...
+                  </p>
+                </div>
+              )}
+              {results.length > 0 && (
+                <div>
+                  <ResultTable results={results} />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
+  )
+}
+
+function ResultTable({ results }: { results: PredictedResults[] }) {
+  return (
+    <Table>
+      <TableCaption>Results</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Label</TableHead>
+          <TableHead>Probability</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {results.map((result) => (
+          <TableRow key={result.label}>
+            <TableCell className="font-medium">{result.label}</TableCell>
+            <TableCell className="text-right">
+              {result.score * 100 + "%"}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   )
 }
 
