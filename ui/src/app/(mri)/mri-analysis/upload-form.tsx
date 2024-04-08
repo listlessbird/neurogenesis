@@ -296,6 +296,7 @@ export function UploadForm() {
                         id="name"
                         placeholder="Enter patient name"
                         {...field}
+                        autoComplete="off"
                       />
                     </FormControl>
                   </div>
