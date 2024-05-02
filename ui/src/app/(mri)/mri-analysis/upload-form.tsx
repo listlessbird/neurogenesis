@@ -21,6 +21,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react"
@@ -31,10 +32,33 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+const NEURO_DISEASES = ["alzheimer", "parkinson", "huntington", "als"] as const
+
+type NeuroDisease = (typeof NEURO_DISEASES)[number]
+
+export type PredictedResults = {
+  label: string
+  score: number
+}
 
 type UploadContextType = {
+  type: NeuroDisease
   files: File[]
   setFiles: Dispatch<React.SetStateAction<File[]>>
+  setType: Dispatch<React.SetStateAction<NeuroDisease>>
+  results: PredictedResults[]
+  setResults: Dispatch<React.SetStateAction<PredictedResults[]>>
+  hasSubmitted: boolean
+  setHasSubmitted: Dispatch<React.SetStateAction<boolean>>
 }
 
 const UploadContext = createContext<UploadContextType | null>(null)
@@ -49,11 +73,28 @@ export function useUpload() {
 
 export function UploadProvider({ children }: { children: React.ReactNode }) {
   const [files, setFiles] = useState<File[]>([])
+  const [type, setType] = useState<NeuroDisease>(NEURO_DISEASES[0])
+
+  const [results, setResults] = useState<PredictedResults[]>([])
+
+  const [hasSubmitted, setHasSubmitted] = useState(false)
+
+  const values = useMemo(
+    () => ({
+      files,
+      setFiles,
+      type,
+      setType,
+      results,
+      setResults,
+      hasSubmitted,
+      setHasSubmitted,
+    }),
+    [files, type, results, hasSubmitted, setHasSubmitted]
+  )
 
   return (
-    <UploadContext.Provider value={{ files, setFiles }}>
-      {children}
-    </UploadContext.Provider>
+    <UploadContext.Provider value={values}>{children}</UploadContext.Provider>
   )
 }
 
@@ -62,10 +103,19 @@ const UploadFormSchema = z.object({
   age: z.coerce.number().int(),
   history: z.string(),
   scans: z.array(z.instanceof(File)),
+  neurodegenerativeDisease: z.enum(NEURO_DISEASES),
 })
 
 export function UploadForm() {
-  const { files, setFiles } = useUpload()
+  const {
+    files,
+    setFiles,
+    type,
+    setType,
+    hasSubmitted,
+    setHasSubmitted,
+    setResults,
+  } = useUpload()
 
   const uploadRef = useRef(null)
 
@@ -75,6 +125,8 @@ export function UploadForm() {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [],
       "application/pdf": [],
+      "image/jpeg": [],
+      "image/png": [],
     },
     onDrop: (accepted, rejected, e) => {
       console.log({
@@ -87,18 +139,6 @@ export function UploadForm() {
     },
   })
 
-  // useEffect(
-  //   function syncFiles() {
-  //     console.log("sync!!")
-  //     if (!uploadRef.current) return
-  //     const input = uploadRef.current as HTMLInputElement
-  //     const filesInInput = input.files
-  //     if (!filesInInput) return
-  //     filesInInput.
-  //   },
-  //   [files]
-  // )
-
   const form = useForm({
     resolver: zodResolver(UploadFormSchema),
     defaultValues: {
@@ -106,11 +146,52 @@ export function UploadForm() {
       age: "",
       history: "",
       scans: [],
+      neurodegenerativeDisease: "alzheimer",
     },
   })
 
-  function onSubmit(data: z.infer<typeof UploadFormSchema>) {
+  async function onSubmit(data: z.infer<typeof UploadFormSchema>) {
     console.log(data)
+
+    setHasSubmitted(true)
+
+    const formData = new FormData()
+    formData.append("name", data.name)
+    formData.append("age", data.age.toString())
+    formData.append("history", data.history)
+    formData.append("neurodegenerativeDisease", data.neurodegenerativeDisease)
+    data.scans.forEach((file) => {
+      formData.append("image", file)
+    })
+
+    switch (type) {
+      case "alzheimer": {
+        const res = await fetch("http://127.0.0.1:5000/mri", {
+          method: "POST",
+          body: formData,
+        })
+
+        const json = (await res.json()) as PredictedResults[]
+        console.log(json)
+        setResults(json)
+        setHasSubmitted(false)
+        break
+      }
+      case "parkinson": {
+        const res = await fetch("http://127.0.0.1:5000/parkinson", {
+          method: "POST",
+          body: formData,
+        })
+
+        const json = (await res.json()) as PredictedResults[]
+        console.log(json)
+        setResults(json)
+        setHasSubmitted(false)
+        break
+      }
+      case "huntington":
+      case "als":
+    }
   }
 
   return (
@@ -130,6 +211,46 @@ export function UploadForm() {
           })}
         >
           <CardContent className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="neurodegenerativeDisease"
+              render={({ field }) => (
+                <div className="grid gap-4">
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      Neurodegenerative disease
+                    </FormLabel>
+                    <Select
+                      onValueChange={(e) => {
+                        field.onChange(e)
+                        setType(e as NeuroDisease)
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder="Select disease" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value={NEURO_DISEASES[0]}>
+                            Alzheimer&apos;s
+                          </SelectItem>
+                          <SelectItem value={NEURO_DISEASES[1]}>
+                            Parkinson&apos;s
+                          </SelectItem>
+                          <SelectItem value={NEURO_DISEASES[2]}>
+                            Huntington&apos;s
+                          </SelectItem>
+                          <SelectItem value="als">ALS</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                </div>
+              )}
+            />
             <FormField
               control={form.control}
               name="scans"

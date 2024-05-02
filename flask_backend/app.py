@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify, render_template
+
+from flask_cors import CORS, cross_origin
 from transformers import pipeline
 from PIL import Image
 
 app = Flask(__name__)
 
+cors = CORS(app)
 # Initialize the pipeline model
 parkinson = pipeline("image-classification", model='gianlab/swin-tiny-patch4-window7-224-finetuned-parkinson-classification')
 mri = pipeline("image-classification", model="dewifaj/alzheimer_mri_classification")
